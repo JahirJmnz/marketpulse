@@ -33,35 +33,22 @@ export function createNewsAnalysisPrompt(
   competitor: Competitor,
   news: CompetitorNews[]
 ): string {
-  const newsText = news.map((item, idx) => 
-    `${idx + 1}. [${item.published_date}] ${item.title}\n   ${item.snippet}\n   URL: ${item.url}`
+  // Limitar a máximo 5 noticias para reducir tamaño del prompt
+  const limitedNews = news.slice(0, 5)
+  const newsText = limitedNews.map((item, idx) => 
+    `${idx + 1}. ${item.title}\n${item.snippet.slice(0, 150)}...`
   ).join('\n\n')
 
-  return `Analiza las siguientes noticias recientes sobre ${competitor.name}:
+  return `Analiza noticias de ${competitor.name}:
 
 ${newsText}
 
-Identifica:
-1. Movimientos estratégicos importantes (lanzamientos, adquisiciones, partnerships)
-2. Cambios en la dirección de la empresa
-3. Información financiera relevante
-4. Amenazas u oportunidades que representan
-5. Tendencias o patrones emergentes
-
-Responde en formato JSON:
+JSON puro (sin markdown):
 {
-  "key_movements": [
-    {
-      "type": "launch|acquisition|partnership|financial|strategy",
-      "description": "Descripción del movimiento",
-      "impact": "high|medium|low",
-      "date": "YYYY-MM-DD",
-      "source_url": "URL"
-    }
-  ],
-  "sentiment": "positive|neutral|negative",
-  "threat_level": "high|medium|low",
-  "summary": "Resumen ejecutivo de 2-3 líneas"
+  "key_movements": [{"type": "launch", "description": "breve", "impact": "high", "date": "2025-10-01"}],
+  "sentiment": "positive",
+  "threat_level": "medium",
+  "summary": "Resumen en 2 líneas"
 }`
 }
 
@@ -73,52 +60,40 @@ export function createReportGenerationPrompt(
   competitorAnalyses: Array<{ competitor: Competitor; analysis: any; news: any[] }>
 ): string {
   const analysesText = competitorAnalyses.map((item, idx) => {
-    return `### ${idx + 1}. ${item.competitor.name} (${item.competitor.type})
-${item.analysis.summary}
+    const movements = item.analysis.key_movements.slice(0, 3).map((m: any) => 
+      `- ${m.description} (${m.impact})`
+    ).join('\n')
+    
+    return `**${item.competitor.name}**: ${item.analysis.summary}
+${movements}
+Amenaza: ${item.analysis.threat_level}`
+  }).join('\n\n')
 
-Movimientos clave:
-${item.analysis.key_movements.map((m: any) => `- [${m.date}] ${m.description} (Impacto: ${m.impact})`).join('\n')}
-
-Nivel de amenaza: ${item.analysis.threat_level}
-`
-  }).join('\n\n---\n\n')
-
-  return `Eres un analista de inteligencia competitiva creando un reporte ejecutivo.
-
-Empresa objetivo: ${profile.company_name}
-Descripción: ${profile.company_description}
-
-Análisis de competidores:
+  return `Reporte ejecutivo para ${profile.company_name}:
 
 ${analysesText}
 
-Genera un reporte ejecutivo profesional en formato Markdown con las siguientes secciones:
-
+Genera en Markdown:
 # Reporte de Inteligencia Competitiva
 
 ## 📊 Resumen Ejecutivo
-(2-3 párrafos con los hallazgos más importantes)
+(2 párrafos clave)
 
-## 🏢 Actividad de Competidores
-(Subsección por cada competidor con movimientos clave)
+## 🏢 Competidores
+(Analiza cada uno brevemente)
 
-## 📈 Tendencias del Mercado
-(Patrones y tendencias identificadas en el sector)
+## 📈 Tendencias
+(3-4 tendencias principales)
 
-## 💡 Oportunidades Identificadas
-(3-5 oportunidades accionables basadas en los hallazgos)
+## 💡 Oportunidades
+(3-4 oportunidades)
 
-## ⚠️ Amenazas y Riesgos
-(3-5 amenazas principales a monitorear)
+## ⚠️ Amenazas
+(3-4 amenazas)
 
 ## 🎯 Recomendaciones
-(5-7 acciones específicas recomendadas)
+(5 acciones específicas)
 
-Usa:
-- Lenguaje profesional pero accesible
-- Datos específicos y fechas cuando sea relevante
-- Formato Markdown apropiado (encabezados, listas, énfasis)
-- Emojis para mejorar la legibilidad
-- Bullets concisos pero informativos`
+Conciso y accionable.`
 }
 

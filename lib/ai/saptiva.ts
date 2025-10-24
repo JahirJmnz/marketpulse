@@ -64,8 +64,8 @@ export async function generateWithSaptiva(
 ) {
   const {
     model = 'fast',
-    temperature = 0.7,  // Default recomendado por Saptiva
-    maxTokens = 600,    // Default de Saptiva API
+    temperature = 0.7,
+    maxTokens = 8000,    // ⚡⚡⚡ Default alto para respuestas completas
     systemPrompt
   } = options
 
@@ -151,7 +151,7 @@ export async function generateJSON<T = any>(
     model: getSaptivaModel(options.model || 'fast'),
     messages,
     temperature: options.temperature || 0.3,
-    maxTokens: options.maxTokens || 4000, // ⚡ Aumentar límite para JSONs grandes
+    maxTokens: options.maxTokens || 8000, // ⚡⚡⚡ Default alto para JSONs grandes
   })
 
   // Extraer JSON del texto (múltiples estrategias)

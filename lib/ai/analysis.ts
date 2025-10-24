@@ -29,10 +29,10 @@ export async function identifyCompetitors(
     const result = await generateJSON<CompetitorIdentificationResult>(
       prompt,
       {
-        model: 'fast',  // ⚡ Volver a Saptiva Turbo
-        temperature: 0.2,  // Más determinístico
-        maxTokens: 1500,  // Reducir para forzar respuestas concisas
-        systemPrompt: '' // Sin system prompt para reducir tokens
+        model: 'fast',
+        temperature: 0.2,
+        maxTokens: 3000,  // ⚡ Aumentar para respuestas completas
+        systemPrompt: ''
       }
     )
     
@@ -71,10 +71,10 @@ export async function analyzeCompetitorNews(
     const analysis = await generateJSON<CompetitorAnalysis>(
       prompt,
       {
-        model: 'reasoning',  // Usar Saptiva Cortex para análisis profundo
-        temperature: 0.4,
-        maxTokens: 3000,  // ⚡ Suficiente para análisis detallado
-        systemPrompt: SYSTEM_PROMPT
+        model: 'fast',
+        temperature: 0.3,
+        maxTokens: 4000,  // ⚡ Aumentar para análisis detallado
+        systemPrompt: ''
       }
     )
     
@@ -144,10 +144,10 @@ Se recomienda:
     const report = await generateWithSaptiva(
       prompt,
       {
-        model: 'advanced',  // Usar Saptiva Legacy para reportes ejecutivos
-        temperature: 0.6,
-        maxTokens: 4000,
-        systemPrompt: SYSTEM_PROMPT
+        model: 'advanced',  // ⚡⚡ Usar Saptiva Legacy (LLama 3.3:70B) - mejor para reportes largos
+        temperature: 0.5,
+        maxTokens: 12000,  // ⚡⚡⚡ MÁXIMO: 12K tokens para reportes completos sin límites
+        systemPrompt: ''
       }
     )
     

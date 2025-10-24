@@ -34,7 +34,7 @@ export async function generateReportInBackground(
     // Paso 2-4: Generar reporte usando el orquestador
     console.log('📍 PASOS 2-4: Generando reporte con IA...')
     const result = await generateCompetitiveReport(profile, {
-      days: 7,
+      days: 30,  // ⚡ Usar 30 días para más resultados
       maxResults: 10
     })
 
